@@ -1,0 +1,133 @@
+openapi: 3.0.0
+info:
+  title: User API
+  description: API for managing users and their quotas
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        description: User object that needs to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    put:
+      summary: Update an existing user
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User object that needs to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete a user by ID
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully
+  /users/{userId}/consumeQuota:
+    post:
+      summary: Consume quota for a user
+      operationId: consumeQuota
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quota consumed successfully
+        '429':
+          description: Quota limit exceeded
+  /users/quota:
+    get:
+      summary: Get quota status for all users
+      operationId: getUsersQuota
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserWithQuota'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        lastLoginTimeUtc:
+          type: string
+          format: date-time
+
+    UserWithQuota:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            requestCount:
+              type: integer
+            quotaResetTime:
+              type: string
+              format: date-time
