@@ -21,7 +21,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserApiImplTest {
+class UsersApiImplTest {
 
     @LocalServerPort
     private int port;
